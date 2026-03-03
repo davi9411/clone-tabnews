@@ -1,0 +1,38 @@
+Cheat Sheet — common commands
+
+Docker (Postgres)
+- Start DB (detached): docker compose -f infra/compose.yaml up -d
+  Start the Postgres container in the background.
+- Stop DB: docker compose -f infra/compose.yaml down
+  Stop and remove the containers created by the compose file.
+- Follow DB logs: docker compose -f infra/compose.yaml logs -f
+  Stream container logs (press Ctrl+C to stop).
+
+Git
+- Show status: git status
+  See changed, staged, and untracked files.
+- Stage all changes (new/modified/deleted): git add -A
+  Stage every change in the working tree for commit.
+- Commit with message: git commit -m "your message"
+  Create a commit with staged changes.
+- Commit tracked files only: git commit -a -m "your message"
+  Stage and commit only modified/deleted files that are already tracked.
+- Force push (use carefully): git push --force
+  Overwrite remote branch with your local branch.
+- Push (normal): git push
+  Push commits from your local branch to the remote.
+- Pull (fetch + merge): git pull
+  Fetch from remote and merge into current branch.
+- Move/rename file: git mv oldname newname
+  Rename a file and stage the rename for commit.
+
+npm / Next.js
+- Start dev server: npm run dev
+  Run Next.js in development mode (hot reload on changes).
+
+Usage tips
+- To start DB and developer server (two steps):
+  1) docker compose -f infra/compose.yaml up -d
+  2) npm run dev
+
+Be careful with --force: only use it when you understand the consequences.
