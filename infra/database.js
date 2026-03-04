@@ -1,5 +1,7 @@
 import { Client } from "pg";
 
+const databaseName = process.env.POSTGRES_DB;
+
 async function query(queryObject) {
   const client = new Client({
     host: process.env.POSTGRES_HOST,
@@ -9,11 +11,37 @@ async function query(queryObject) {
     password: process.env.POSTGRES_PASSWORD,
   });
   await client.connect();
-  const result = await client.query(queryObject);
-  await client.end();
-  return result;
+  try {
+    const result = await client.query(queryObject);
+    return result;
+  } catch (error) {
+    console.error("Database query error:", error);
+  } finally {
+    await client.end();
+  }
+}
+
+async function getVersion() {
+  const result = await query("SHOW server_version;");
+  return result.rows[0].server_version;
+}
+
+async function getMaxConnections() {
+  const result = await query("SHOW max_connections;");
+  return parseInt(result.rows[0].max_connections);
+}
+
+async function getCurrentConnections() {
+  const result = await query({
+    text: "SELECT count(*) FROM pg_stat_activity WHERE datname = $1;",
+    values: [databaseName],
+  });
+  return parseInt(result.rows[0].count);
 }
 
 export default {
   query: query,
+  getVersion: getVersion,
+  getMaxConnections: getMaxConnections,
+  getCurrentConnections: getCurrentConnections,
 };
